@@ -1,6 +1,20 @@
 module.exports = {
   preset: 'react-native',
-  modulePathIgnorePatterns: ['<rootDir>/RNGoogleMobileAdsExample/node_modules', '<rootDir>/lib/'],
+  modulePathIgnorePatterns: [
+    '<rootDir>/RNGoogleMobileAdsExample/node_modules',
+    '<rootDir>/packages/core/lib/',
+    '<rootDir>/packages/_template/lib/',
+    '<rootDir>/packages/applovin/lib/',
+    '<rootDir>/packages/facebook/lib/',
+    '<rootDir>/packages/unity/lib/',
+    '<rootDir>/packages/pangle/lib/',
+    '<rootDir>/packages/vungle/lib/',
+    '<rootDir>/packages/moloco/lib/',
+    '<rootDir>/packages/mintegral/lib/',
+    '<rootDir>/packages/inmobi/lib/',
+    '<rootDir>/packages/yandex/lib/',
+  ],
+
   setupFiles: ['./jest.setup.ts'],
   testPathIgnorePatterns: ['<rootDir>/RNGoogleMobileAdsExample'],
   testRegex: '(/__tests__/.*\\.(test|spec))\\.[jt]sx?$',

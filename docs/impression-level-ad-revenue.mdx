@@ -28,8 +28,23 @@ type PaidEvent = {
   currency: string;
   precision: RevenuePrecisions;
   value: number;
+  /** Compact waterfall snapshot for this paid event (no full adapter list). */
+  responseInfo?: PaidResponseInfo;
+  /** Exact micros as a decimal string when the backend supplies them. */
+  valueMicros?: string | null;
 };
 ```
+
+`currency` is the public name (native Google Mobile Ads APIs expose `currencyCode`).
+Prefer `valueMicros` when present (null when exact micros are unavailable); do not
+derive micros from floating-point `value` in JavaScript.
+
+`responseInfo` on a paid event is a **compact** snapshot (`PaidResponseInfo`): winning
+source and allowlisted extras only — not the full `adapterResponses` waterfall. For
+load-time auction diagnostics, distinct no-fill handling, and waterfall debugging, see
+[Revenue telemetry and auction diagnostics](/revenue-telemetry-and-auction-diagnostics).
+Canonical TypeScript shapes live in the [v17 API
+reference](./rngma-v17-api-reference.md#7-response-metadata-and-paid-events).
 
 where `RevenuePrecisions` is an enum with keys `ESTIMATED`, `PRECISE`,
 `PUBLISHER_PROVIDED`, and `UNKNOWN`. It can be imported from the library as

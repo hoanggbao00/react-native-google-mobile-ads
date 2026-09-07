@@ -65,6 +65,11 @@ Interstitials are full-screen ads that cover the interface of an app until close
 programmatically loaded and then shown at a suitable point during your application flow (e.g. after a level on a gaming
 app has been completed, or game over). The ads can be preloaded in the background to ensure they're ready to go when needed.
 
+To keep a **buffer** of ready interstitials and poll at show time, see
+[Preload pools and multi-format recipes](/preload-pools-and-multiformat-recipes).
+For `destroy()`, structured errors, and other v17 deltas, see
+[Migrating to v17](/migrating-to-v17).
+
 To create a new interstitial, call the `createForAdRequest` method from the `InterstitialAd` class. The first argument
 of the method is the "Ad Unit ID". For testing, we can use a Test ID, however for production the ID from the
 Google AdMob dashboard under "Ad units" should be used:
@@ -79,11 +84,34 @@ const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
 });
 ```
 
-The second argument is additional optional request options object to be sent whilst loading an advert, such as keywords & location.
+The second argument is additional optional request options object to be sent whilst loading an advert, such as keywords, location, and content URLs.
 Setting additional request options helps AdMob choose better tailored ads from the network.
-View the [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/types/RequestOptions.ts) source code to see the full range of options available.
+View the [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/types/RequestOptions.ts) source code to see the full range of options available.
 
-The call to `createForAdRequest` returns an instance of the [`InterstitialAd`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/ads/InterstitialAd.ts) class,
+### Content URL targeting (brand safety)
+
+When an ad sits next to web-like content (for example an article in a feed), you can pass the page URL and nearby URLs so Google can apply a more appropriate content rating.
+
+- `contentUrl`: the URL of the content currently being displayed (max 512 characters, HTTP or HTTPS).
+- `neighboringContentUrls`: up to 4 nearby content URLs (each max 512 characters, HTTP or HTTPS).
+
+These options apply to any ad loaded with `RequestOptions` (`createForAdRequest`, banner `requestOptions`, [hooks](/displaying-ads-hook), [native ads](/native-ads)).
+
+```js
+import { InterstitialAd, TestIds } from 'react-native-google-mobile-ads';
+
+const interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
+  contentUrl: 'https://www.example.com/article-a',
+  neighboringContentUrls: [
+    'https://www.example.com/article-b',
+    'https://www.example.com/article-c',
+  ],
+});
+```
+
+See Google's [brand safety targeting](https://developers.google.com/ad-manager/mobile-ads-sdk/android/targeting#content_url) docs for platform details.
+
+The call to `createForAdRequest` returns an instance of the [`InterstitialAd`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/ads/InterstitialAd.ts) class,
 which provides a number of utilities for loading and displaying interstitials.
 
 To listen to events, such as when the advert from the network has loaded or when an error occurs, we can subscribe via the
@@ -155,7 +183,7 @@ application.
 
 You can subscribe to other various events with `addAdEventListener` listener such as if the user clicks the advert,
 or closes the advert and returns back to your app.
-To see the full list of available events, view the [`AdEventType`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/AdEventType.ts) source code.
+To see the full list of available events, view the [`AdEventType`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/AdEventType.ts) source code.
 
 If needed, you can reuse the existing instance of the `InterstitialAd` class to load more adverts and show them when required.
 
@@ -184,9 +212,9 @@ const rewarded = RewardedAd.createForAdRequest(adUnitId, {
 
 The second argument is additional optional request options object to be sent whilst loading an advert, such as keywords & location.
 Setting additional request options helps AdMob choose better tailored ads from the network.
-View the [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/types/RequestOptions.ts) source code to see the full range of options available.
+View the [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/types/RequestOptions.ts) source code to see the full range of options available.
 
-The call to `createForAdRequest` returns an instance of the [`RewardedAd`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/ads/RewardedAd.ts) class,
+The call to `createForAdRequest` returns an instance of the [`RewardedAd`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/ads/RewardedAd.ts) class,
 which provides a number of utilities for loading and displaying rewarded ads.
 
 To listen to events, such as when the advert from the network has loaded or when an error occurs, we can subscribe via the
@@ -252,13 +280,13 @@ Like Interstitial Ads, you can listen to the events with the `addAdEventListener
 the advert and returns back to your app. However, you can listen to an extra `EARNED_REWARD` event which is triggered when user completes the
 advert action. An additional `reward` payload is sent with the event, containing the amount and type of rewarded (specified via the dashboard).
 
-To learn more, view the [`RewardedAdEventType`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/RewardedAdEventType.ts) source code.
+To learn more, view the [`RewardedAdEventType`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/RewardedAdEventType.ts) source code.
 
 If needed, you can reuse the existing instance of the `RewardedAd` class to load more adverts and show them when required.
 
 While the `EARNED_REWARD` event only occurs on the client, Server Side Verification (or SSV) can be used for confirming a user completed an advert action. For this, you have to specify the Server Side Verification callback URL in your Ads dashboard.
 
-You can customize SSV parameters when your SSV callback is called by setting the `serverSideVerificationOptions` field in your [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/types/RequestOptions.ts) parameter.
+You can customize SSV parameters when your SSV callback is called by setting the `serverSideVerificationOptions` field in your [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/types/RequestOptions.ts) parameter.
 
 ```js
 const rewardedAd = RewardedAd.createForAdRequest(adUnitId, {
@@ -304,9 +332,9 @@ const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(adUnitId,
 
 The second argument is additional optional request options object to be sent whilst loading an advert, such as keywords & location.
 Setting additional request options helps AdMob choose better tailored ads from the network.
-View the [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/types/RequestOptions.ts) source code to see the full range of options available.
+View the [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/types/RequestOptions.ts) source code to see the full range of options available.
 
-The call to `createForAdRequest` returns an instance of the [`RewardedInterstitialAd`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/ads/RewardedInterstitialAd.ts) class,
+The call to `createForAdRequest` returns an instance of the [`RewardedInterstitialAd`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/ads/RewardedInterstitialAd.ts) class,
 which provides a number of utilities for loading and displaying rewarded interstitial ads.
 
 To listen to events, such as when the advert from the network has loaded or when an error occurs, we can subscribe via the
@@ -381,13 +409,13 @@ Like Interstitial Ads, you can listen to the events with the `addAdEventListener
 the advert and returns back to your app. However, you can listen to an extra `EARNED_REWARD` event which is triggered when user completes the
 advert action. An additional `reward` payload is sent with the event, containing the amount and type of rewarded (specified via the dashboard).
 
-To learn more, view the [`RewardedAdEventType`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/RewardedAdEventType.ts) source code.
+To learn more, view the [`RewardedAdEventType`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/RewardedAdEventType.ts) source code.
 
 If needed, you can reuse the existing instance of the `RewardedInterstitialAd` class to load more adverts and show them when required.
 
 While the `EARNED_REWARD` event only occurs on the client, Server Side Verification (or SSV) can be used for confirming a user completed an advert action. For this, you have to specify the Server Side Verification callback URL in your Ads dashboard.
 
-You can customize SSV parameters when your SSV callback is called by setting the `serverSideVerificationOptions` field in your [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/types/RequestOptions.ts) parameter.
+You can customize SSV parameters when your SSV callback is called by setting the `serverSideVerificationOptions` field in your [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/types/RequestOptions.ts) parameter.
 
 ```js
 const rewardedInterstitialAd = RewardedInterstitialAd.createForAdRequest(adUnitId, {
@@ -412,7 +440,7 @@ Banner ads are partial adverts which can be integrated within your existing appl
 a Banner only takes up a limited area of the application and displays an advert within the area. This allows you to integrate
 adverts without a disruptive action.
 
-The module exposes a [`BannerAd`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/ads/BannerAd.tsx) component. The `unitId` and `size` props are required to display
+The module exposes a [`BannerAd`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/ads/BannerAd.tsx) component. The `unitId` and `size` props are required to display
 a banner:
 
 ```js
@@ -423,7 +451,7 @@ import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-goo
 const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyyyyyy';
 
 function App() {
-  const bannerRef = useRef<BannerAd>(null);
+  const bannerRef = useRef < BannerAd > null;
 
   // (iOS) WKWebView can terminate if app is in a "suspended state", resulting in an empty banner when app returns to foreground.
   // Therefore it's advised to "manually" request a new ad when the app is foregrounded (https://groups.google.com/g/google-admob-ads-sdk/c/rwBpqOUr8m8).
@@ -432,12 +460,16 @@ function App() {
   });
 
   return (
-    <BannerAd ref={bannerRef} unitId={adUnitId} size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER} />
+    <BannerAd
+      ref={bannerRef}
+      unitId={adUnitId}
+      size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER}
+    />
   );
 }
 ```
 
-The `size` prop takes a [`BannerAdSize`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/BannerAdSize.ts) type, and once the advert is available, will
+The `size` prop takes a [`BannerAdSize`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/BannerAdSize.ts) type, and once the advert is available, will
 fill the space for the chosen size.
 
 <Info>
@@ -447,7 +479,7 @@ fill the space for the chosen size.
 
 The `requestOptions` prop is additional optional request options object to be sent whilst loading an advert, such as keywords & location.
 Setting additional request options helps AdMob choose better tailored ads from the network.
-View the [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/types/RequestOptions.ts) documentation to view the full range of options available.
+View the [`RequestOptions`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/types/RequestOptions.ts) documentation to view the full range of options available.
 
 The component also exposes props for listening to events, which you can use to handle the state of your app is the user
 or network triggers an event:
@@ -505,7 +537,7 @@ function App() {
 }
 ```
 
-The `sizes` prop takes an array of [`BannerAdSize`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/src/BannerAdSize.ts) types.
+The `sizes` prop takes an array of [`BannerAdSize`](https://github.com/invertase/react-native-google-mobile-ads/blob/main/packages/core/src/BannerAdSize.ts) types.
 
 ## Native Ads
 

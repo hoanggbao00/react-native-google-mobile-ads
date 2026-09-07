@@ -13,10 +13,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@invertase/rngma-testing": "portal:./modules/rngma-testing",
     "@react-native/new-app-screen": "0.83.1",
     "react": "19.2.3",
     "react-native": "0.86.0",
-    "react-native-google-mobile-ads": "portal:../",
+    "react-native-coverage": "0.2.0",
+    "react-native-google-mobile-ads": "workspace:*",
     "react-native-safe-area-context": "^5.5.2"
   },
   "devDependencies": {
@@ -36,7 +38,6 @@
     "@types/react-test-renderer": "^19.1.0",
     "eslint": "^8.19.0",
     "jest": "^29.6.3",
-    "jet": "https://github.com/invertase/jet#@mikehardy/jet-next",
     "prettier": "2.8.8",
     "react-native-test-app": "^5.4.0",
     "react-test-renderer": "19.2.3",

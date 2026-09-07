@@ -1,0 +1,27 @@
+{
+  "neverConnectToCloud": true,
+  "namedInputs": {
+    "jsSource": [
+      "{projectRoot}/src/**/*",
+      "{projectRoot}/plugin/src/**/*",
+      "{projectRoot}/tsconfig.json",
+      "{projectRoot}/plugin/tsconfig.json",
+      "{projectRoot}/package.json",
+      "{projectRoot}/app.plugin.js",
+      "{workspaceRoot}/tsconfig.packages.base.json",
+      "{workspaceRoot}/yarn.lock"
+    ]
+  },
+  "targetDefaults": {
+    "prepare": {
+      "dependsOn": ["^prepare"],
+      "inputs": ["jsSource"],
+      "cache": true,
+      "outputs": [
+        "{projectRoot}/lib/**",
+        "{projectRoot}/plugin/build/**",
+        "{projectRoot}/src/version.ts"
+      ]
+    }
+  }
+}
