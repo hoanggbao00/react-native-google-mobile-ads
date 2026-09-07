@@ -22,7 +22,6 @@ import mobileAds, {
   BannerAd,
   GAMBannerAd,
   GAMInterstitialAd,
-  NativeAd,
   useAppOpenAd,
   useInterstitialAd,
   useRewardedAd,
@@ -71,7 +70,6 @@ import type {
   MultiFormatBannerAdViewProps,
   MultiFormatBannerSize,
   MultiFormatLoadResult,
-  NativeAdLoadError,
   PaidEvent,
   PollResult,
   PooledAd,
@@ -822,10 +820,6 @@ const errorPayload: AdErrorPayload = {
   phase: 'load',
 };
 
-NativeAd.createForAdRequest(TestIds.NATIVE).catch((error: unknown) => {
-  const loadError = error as NativeAdLoadError;
-  console.log(loadError.code, loadError.reason, loadError.phase, loadError.message);
-});
 const paid: PaidEvent = {
   currency: 'USD',
   precision: 3,

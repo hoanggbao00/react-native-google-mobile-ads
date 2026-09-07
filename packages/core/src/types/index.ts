@@ -38,5 +38,4 @@ export * from './RequestOptions';
 export * from './ResponseInfo';
 export * from './RewardedAdReward';
 export * from './AppEvent';
-export * from './NativeAdLoadError';
 export * from './NativeAdRequestOptions';

@@ -62,8 +62,8 @@ describe('Google Mobile Ads NativeAd', function () {
       );
 
       await expect(NativeAd.createForAdRequest('invalid-unit')).rejects.toMatchObject({
-        message: '[googleMobileAds/ERROR_LOAD] The ad request was invalid',
-        code: 'googleMobileAds/ERROR_LOAD',
+        message: 'The ad request was invalid',
+        code: 'ERROR_LOAD',
         reason: 'ERROR_LOAD',
         phase: 'load',
       });
@@ -77,9 +77,8 @@ describe('Google Mobile Ads NativeAd', function () {
       );
 
       await expect(NativeAd.createForAdRequest('abc')).rejects.toMatchObject({
-        message:
-          '[googleMobileAds/ERROR_LOAD] Failed to get a valid response ID from the loaded ad.',
-        code: 'googleMobileAds/ERROR_LOAD',
+        message: 'Failed to get a valid response ID from the loaded ad.',
+        code: 'ERROR_LOAD',
         reason: 'ERROR_LOAD',
         phase: 'load',
       });
